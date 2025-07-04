@@ -1,18 +1,12 @@
 // script.js
 
-// Initialize cart from local storage or as an empty array
 let cart = JSON.parse(localStorage.getItem("sneakCart")) || [];
 
-/**
- * Saves the current cart array to local storage.
- */
 function saveCart() {
   localStorage.setItem("sneakCart", JSON.stringify(cart));
 }
 
-/**
- * Updates the cart count displayed on the navigation bar.
- */
+// Helper to update the cart count on the navbar
 function updateCartCount() {
   const cartCountSpan = document.getElementById("cart-count");
   if (cartCountSpan) {
@@ -20,48 +14,7 @@ function updateCartCount() {
   }
 }
 
-/**
- * Displays a custom message to the user instead of using alert().
- * @param {string} message - The message to display.
- * @param {boolean} isSuccess - True for success message, false for error/warning.
- */
-function showCustomMessage(message, isSuccess = true) {
-  let messageBox = document.getElementById('custom-message-box');
-  if (!messageBox) {
-    messageBox = document.createElement('div');
-    messageBox.id = 'custom-message-box';
-    messageBox.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 15px 25px;
-      border-radius: 8px;
-      font-family: 'Inter', sans-serif;
-      font-size: 16px;
-      color: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-      transform: translateY(-20px);
-    `;
-    document.body.appendChild(messageBox);
-  }
-
-  messageBox.textContent = message;
-  messageBox.style.backgroundColor = isSuccess ? '#4CAF50' : '#f44336'; // Green for success, Red for error
-  messageBox.style.opacity = '1';
-  messageBox.style.transform = 'translateY(0)';
-
-  // Hide the message after 3 seconds
-  setTimeout(() => {
-    messageBox.style.opacity = '0';
-    messageBox.style.transform = 'translateY(-20px)';
-  }, 3000);
-}
-
-
-// INDEX PAGE - Initializes event listeners for "Add to Cart" buttons
+// INDEX PAGE
 function initIndex() {
   document.querySelectorAll(".add-to-cart").forEach(button => {
     button.addEventListener("click", () => {
@@ -71,82 +24,93 @@ function initIndex() {
       cart.push({ name, price });
       saveCart();
 
-      // Replace alert with custom message box
-      showCustomMessage(`${name} added to cart!`);
+      alert(`${name} added to cart!`);
       updateCartCount(); // Optional: live count on navbar
 
-      // --- Use DataLayer.push for GA4 add_to_cart event ---
-      // This pushes a custom event 'add_to_cart_data_layer' and associated data
-      // to the dataLayer, which GTM will then pick up.
-      if (typeof window.dataLayer === 'object') {
-        const currentCartTotal = cart.reduce((acc, item) => acc + item.price, 0);
-
-        window.dataLayer.push({
-          'event': 'add_to_cart_data_layer', // Custom event name for GTM
-          'ecommerce': { // GA4 recommended e-commerce object structure
-            'items': [{
-              'item_id': name.replace(/\s/g, '_').toLowerCase(), // Unique ID for the item
-              'item_name': name,
-              'price': price,
-              'quantity': 1
-            }],
-            'value': currentCartTotal, // Total value of items in cart
-            'currency': 'USD' // Currency code
-          }
+      // --- GA4: Send add_to_cart event with item details and updated cart length/value ---
+      if (typeof gtag === "function") {
+        const currentCartTotal = cart.reduce((acc, item) => acc + item.price, 0); // Calculate total on add
+        gtag('event', 'add_to_cart', {
+          items: [{ // Recommended way to send item data in GA4 for e-commerce events
+            item_id: name.replace(/\s/g, '_').toLowerCase(), // Example: create an item_id
+            item_name: name,
+            price: price, // Use 'price' for the item's price
+            quantity: 1 // Assuming 1 quantity per add to cart click
+          }],
+          cart_length: cart.length,
+          cart_total_value: currentCartTotal // Send the current total cart value
         });
-        console.log(`DataLayer push for add_to_cart_data_layer: ${name}`);
-      } else {
-        console.log("dataLayer is not defined. Google Tag Manager might not be loaded.");
       }
     });
   });
+
+  updateCartCount();
 }
 
-// CART PAGE - Initializes cart display and event listeners for removing items
+// CART PAGE
 function initCart() {
   const cartList = document.getElementById("cart-list");
-  const cartTotalSpan = document.getElementById("cart-total");
+  const totalSpan = document.getElementById("total"); // Renamed for clarity, was 'total'
+  const checkoutBtn = document.getElementById("checkout-btn");
 
-  /**
-   * Renders the cart items in the UI.
-   */
-  function renderCart() {
-    cartList.innerHTML = ""; // Clear existing list
-    let total = 0;
+  function updateCartDisplay() {
+    cartList.innerHTML = "";
+    let sum = 0;
 
     if (cart.length === 0) {
-      cartList.innerHTML = "<p class='text-gray-600'>Your cart is empty.</p>";
+      cartList.innerHTML = "<p>Your cart is empty.</p>";
     } else {
       cart.forEach((item, index) => {
         const li = document.createElement("li");
-        li.className = "flex justify-between items-center bg-white p-4 rounded-lg shadow-sm mb-3";
+        li.className = "cart-item";
         li.innerHTML = `
-          <span>${item.name} - $${item.price.toFixed(2)}</span>
-          <button class="remove-from-cart text-red-500 hover:text-red-700 font-semibold" data-index="${index}">Remove</button>
+          ${item.name} - ₹${item.price.toFixed(2)}
+          <button class="remove-btn" data-index="${index}">Remove</button>
         `;
         cartList.appendChild(li);
-        total += item.price;
+        sum += item.price;
       });
     }
 
-    cartTotalSpan.textContent = total.toFixed(2);
-    updateCartCount(); // Update cart count in navbar
+    totalSpan.textContent = `₹${sum.toFixed(2)}`; // Update display total
+
+    // --- GA4: Send cart_view_update event when cart display is updated ---
+    if (typeof gtag === "function") {
+      gtag('event', 'cart_view_update', {
+        cart_length: cart.length,
+        cart_total_value: sum // Send the updated total cart value
+      });
+    }
   }
 
-  // Event delegation for remove buttons
-  cartList.addEventListener("click", (event) => {
-    if (event.target.classList.contains("remove-from-cart")) {
-      const index = parseInt(event.target.getAttribute("data-index"));
-      const removedItem = cart[index];
+  // Initial display and GA4 event on cart page load
+  updateCartDisplay();
 
-      // Remove item from cart array
+  // --- GA4: Send an event on cart page load with initial cart data ---
+  if (typeof gtag === "function") {
+    const initialCartTotal = cart.reduce((acc, item) => acc + item.price, 0);
+    gtag('event', 'page_view', { // Use page_view or a custom event like 'cart_page_loaded'
+      page_title: document.title,
+      page_location: window.location.href,
+      cart_length: cart.length,
+      cart_total_value: initialCartTotal
+    });
+  }
+
+
+  // Event listener for remove buttons
+  cartList.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-btn")) {
+      const index = parseInt(e.target.getAttribute("data-index"));
+      const removedItem = cart[index]; // Get the item being removed
+
       cart.splice(index, 1);
-      saveCart(); // Save updated cart to local storage
-      renderCart(); // Re-render the cart display
+      saveCart();
+      updateCartDisplay();
 
-      // --- GA4: Send remove_from_cart event with item details ---
+      // --- GA4: Send remove_from_cart event ---
       if (typeof gtag === "function") {
-        const currentCartTotal = cart.reduce((acc, item) => acc + item.price, 0);
+        const currentCartTotal = cart.reduce((acc, item) => acc + item.price, 0); // Recalculate total after removal
         gtag('event', 'remove_from_cart', {
           items: [{
             item_id: removedItem.name.replace(/\s/g, '_').toLowerCase(),
@@ -154,52 +118,78 @@ function initCart() {
             price: removedItem.price,
             quantity: 1
           }],
-          value: currentCartTotal,
-          currency: 'USD'
+          cart_length: cart.length,
+          cart_total_value: currentCartTotal // Send the updated total cart value
         });
-      } else {
-        console.log("gtag is not defined. Google Analytics might be blocked or not loaded.");
       }
     }
   });
 
-  renderCart(); // Initial render when cart page loads
+  // Event listener for checkout button
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener("click", () => {
+      if (cart.length > 0) {
+        // --- GA4: Send begin_checkout event ---
+        if (typeof gtag === "function") {
+          const finalCartTotal = cart.reduce((acc, item) => acc + item.price, 0);
+          gtag('event', 'begin_checkout', {
+            items: cart.map(item => ({ // Send all items in the cart
+              item_id: item.name.replace(/\s/g, '_').toLowerCase(),
+              item_name: item.name,
+              price: item.price,
+              quantity: 1
+            })),
+            cart_length: cart.length,
+            value: finalCartTotal, // For begin_checkout, 'value' is commonly used for total value
+            currency: "INR" // Assuming Indian Rupee, adjust if different
+          });
+        }
+
+        alert("Proceeding to checkout!");
+        cart = []; // Clear cart after checkout
+        saveCart();
+        updateCartDisplay(); // Update display to show empty cart
+      } else {
+        alert("Your cart is empty. Please add items before checking out.");
+      }
+    });
+  }
 }
 
-// CONTACT PAGE - Initializes form submission handler
+// CONTACT PAGE
 function initContactForm() {
   const contactForm = document.getElementById("contactForm");
-  if (contactForm) {
-    contactForm.addEventListener("submit", function(event) {
-      event.preventDefault(); // Prevent default form submission
 
-      // Collect form data
+  if (contactForm) {
+    contactForm.addEventListener("submit", function (e) {
+      e.preventDefault(); // Prevent the default form submission
+
+      // Get form data
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
-      const inquiryCategory = document.getElementById("inquiryCategory").value;
+      const inquiryCategory = document.getElementById("inquiry_category").value;
       const message = document.getElementById("message").value;
       const age = document.getElementById("age").value;
       const rating = document.getElementById("rating").value;
 
-      // Send data to Google Analytics using dataLayer.push for custom event
-      if (typeof window.dataLayer === 'object') {
-        window.dataLayer.push({
-          'event': 'contact_form_submit_custom', // Custom event name
-          'form_name': 'SneakKicks Contact Form',
-          'inquiry_category': inquiryCategory,
-          'form_rating': parseFloat(rating),
-          'user_name': name,
-          'user_email': email,
-          'user_age': parseInt(age),
-          'message_length': message.length
+      // Send data to Google Analytics
+      if (typeof gtag === "function") {
+        gtag("event", "form_submit", {
+          event_category: "Contact Form",
+          // Using more descriptive parameter names for custom dimensions/metrics
+          inquiry_category: inquiryCategory, // This maps to Inquiry Category dimension
+          form_rating: parseFloat(rating), // This maps to Form Submission Rating metric (ensure it's a number)
+          user_name: name,
+          user_email: email,
+          user_age: parseInt(age), // Ensure age is an integer
+          message_length: message.length,
         });
-        console.log("DataLayer push for contact_form_submit_custom event.");
       } else {
-        console.log("dataLayer is not defined. Google Tag Manager might be blocked or not loaded.");
+        console.log("gtag is not defined. Google Analytics might be blocked or not loaded.");
       }
 
       // Provide user feedback and reset the form
-      showCustomMessage("Thank you for your message! We will get back to you soon.");
+      alert("Thank you for your message! We will get back to you soon.");
       contactForm.reset();
     });
   }
@@ -214,5 +204,5 @@ window.onload = () => {
   } else if (document.getElementById("contactForm")) {
     initContactForm();
   }
-  updateCartCount(); // Ensure cart count is updated on all pages
+  updateCartCount(); // Update cart count on all pages if applicable
 };
