@@ -27,20 +27,16 @@ function initIndex() {
       alert(`${name} added to cart!`);
       updateCartCount(); // Optional: live count on navbar
 
-      // --- GA4: Send add_to_cart event with item details and updated cart length/value ---
-      if (typeof gtag === "function") {
-        const currentCartTotal = cart.reduce((acc, item) => acc + item.price, 0); // Calculate total on add
-        gtag('event', 'add_to_cart', {
-          items: [{ // Recommended way to send item data in GA4 for e-commerce events
-            item_id: name.replace(/\s/g, '_').toLowerCase(), // Example: create an item_id
-            item_name: name,
-            price: price, // Use 'price' for the item's price
-            quantity: 1 // Assuming 1 quantity per add to cart click
-          }],
-          cart_length: cart.length,
-          cart_total_value: currentCartTotal // Send the current total cart value
-        });
+      // --- Adobe Analytics: Send Add to Cart event ---
+      // Check if the 's' object (from Adobe Tags) is available
+      if (typeof s !== "undefined") {
+        s.products = "%;" + name + ";1;" + price; // Format: Category;Product;Quantity;Price
+        s.events = "event2,event6=" + price + ",event8=1"; // scAdd, cartAddValue, itemsAdded
+        s.eVar2 = name; // Product Name (Last Added)
+        s.eVar3 = price; // Product Price (Last Added)
+        s.tl(true, 'o', 'Add to Cart - ' + name); // Link tracking call
       }
+      // Removed gtag('event', 'add_to_cart', ...)
     });
   });
 
@@ -50,7 +46,7 @@ function initIndex() {
 // CART PAGE
 function initCart() {
   const cartList = document.getElementById("cart-list");
-  const totalSpan = document.getElementById("total"); // Renamed for clarity, was 'total'
+  const totalSpan = document.getElementById("total");
   const checkoutBtn = document.getElementById("checkout-btn");
 
   function updateCartDisplay() {
@@ -73,29 +69,22 @@ function initCart() {
     }
 
     totalSpan.textContent = `₹${sum.toFixed(2)}`; // Update display total
-
-    // --- GA4: Send cart_view_update event when cart display is updated ---
-    if (typeof gtag === "function") {
-      gtag('event', 'cart_view_update', {
-        cart_length: cart.length,
-        cart_total_value: sum // Send the updated total cart value
-      });
-    }
+    // Removed gtag('event', 'cart_view_update', ...)
   }
 
-  // Initial display and GA4 event on cart page load
+  // Initial display and Adobe Analytics event on cart page load
   updateCartDisplay();
 
-  // --- GA4: Send an event on cart page load with initial cart data ---
-  if (typeof gtag === "function") {
+  // --- Adobe Analytics: Send Page View event for Cart Page ---
+  if (typeof s !== "undefined") {
     const initialCartTotal = cart.reduce((acc, item) => acc + item.price, 0);
-    gtag('event', 'page_view', { // Use page_view or a custom event like 'cart_page_loaded'
-      page_title: document.title,
-      page_location: window.location.href,
-      cart_length: cart.length,
-      cart_total_value: initialCartTotal
-    });
+    s.pageName = document.title; // Set page name
+    s.prop3 = cart.length; // Cart Item Count on page load
+    s.prop4 = initialCartTotal; // Cart Value on page load
+    s.events = "event5"; // Cart Page Viewed
+    s.t(); // Page view tracking call
   }
+  // Removed gtag('event', 'page_view', ...)
 
 
   // Event listener for remove buttons
@@ -108,20 +97,15 @@ function initCart() {
       saveCart();
       updateCartDisplay();
 
-      // --- GA4: Send remove_from_cart event ---
-      if (typeof gtag === "function") {
-        const currentCartTotal = cart.reduce((acc, item) => acc + item.price, 0); // Recalculate total after removal
-        gtag('event', 'remove_from_cart', {
-          items: [{
-            item_id: removedItem.name.replace(/\s/g, '_').toLowerCase(),
-            item_name: removedItem.name,
-            price: removedItem.price,
-            quantity: 1
-          }],
-          cart_length: cart.length,
-          cart_total_value: currentCartTotal // Send the updated total cart value
-        });
+      // --- Adobe Analytics: Send Remove from Cart event ---
+      if (typeof s !== "undefined") {
+        s.products = "%;" + removedItem.name + ";-1;" + removedItem.price; // Quantity -1 for removal
+        s.events = "event3,event7=" + removedItem.price + ",event9=1"; // scRemove, cartRemoveValue, itemsRemoved
+        s.eVar2 = removedItem.name; // Product Name (Last Removed)
+        s.eVar3 = removedItem.price; // Product Price (Last Removed)
+        s.tl(true, 'o', 'Remove from Cart - ' + removedItem.name); // Link tracking call
       }
+      // Removed gtag('event', 'remove_from_cart', ...)
     }
   });
 
@@ -129,21 +113,18 @@ function initCart() {
   if (checkoutBtn) {
     checkoutBtn.addEventListener("click", () => {
       if (cart.length > 0) {
-        // --- GA4: Send begin_checkout event ---
-        if (typeof gtag === "function") {
+        // --- Adobe Analytics: Send Begin Checkout event ---
+        if (typeof s !== "undefined") {
           const finalCartTotal = cart.reduce((acc, item) => acc + item.price, 0);
-          gtag('event', 'begin_checkout', {
-            items: cart.map(item => ({ // Send all items in the cart
-              item_id: item.name.replace(/\s/g, '_').toLowerCase(),
-              item_name: item.name,
-              price: item.price,
-              quantity: 1
-            })),
-            cart_length: cart.length,
-            value: finalCartTotal, // For begin_checkout, 'value' is commonly used for total value
-            currency: "INR" // Assuming Indian Rupee, adjust if different
-          });
+          // Build products string for all items in cart
+          const productListString = cart.map(item => `%;${item.name};1;${item.price}`).join('');
+          s.products = productListString.substring(1); // Remove leading semicolon
+          s.total = finalCartTotal; // Total value of the cart
+          s.currencyCode = "INR"; // Set currency code as per your GA4 config
+          s.events = "event4"; // scCheckout
+          s.tl(true, 'o', 'Begin Checkout'); // Link tracking call
         }
+        // Removed gtag('event', 'begin_checkout', ...)
 
         alert("Proceeding to checkout!");
         cart = []; // Clear cart after checkout
@@ -172,21 +153,19 @@ function initContactForm() {
       const age = document.getElementById("age").value;
       const rating = document.getElementById("rating").value;
 
-      // Send data to Google Analytics
-      if (typeof gtag === "function") {
-        gtag("event", "form_submit", {
-          event_category: "Contact Form",
-          // Using more descriptive parameter names for custom dimensions/metrics
-          inquiry_category: inquiryCategory, // This maps to Inquiry Category dimension
-          form_rating: parseFloat(rating), // This maps to Form Submission Rating metric (ensure it's a number)
-          user_name: name,
-          user_email: email,
-          user_age: parseInt(age), // Ensure age is an integer
-          message_length: message.length,
-        });
-      } else {
-        console.log("gtag is not defined. Google Analytics might be blocked or not loaded.");
+      // --- Adobe Analytics: Send Form Submit event ---
+      if (typeof s !== "undefined") {
+        s.prop5 = "Contact Us Form"; // Form Name
+        s.eVar5 = inquiryCategory; // Inquiry Category
+        s.eVar6 = parseFloat(rating); // Form Submission Rating
+        s.eVar7 = name; // User Name Submitted
+        s.eVar8 = email; // User Email Submitted
+        s.eVar9 = message.length; // Message Length
+        s.events = "event10"; // formSubmit
+        s.tl(true, 'o', 'Contact Form Submitted - ' + inquiryCategory); // Link tracking call
       }
+      // Removed gtag("event", "form_submit", ...)
+      // Removed else block for gtag not defined as we are using Adobe now.
 
       // Provide user feedback and reset the form
       alert("Thank you for your message! We will get back to you soon.");
