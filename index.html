@@ -7,48 +7,37 @@
   <title>Sneak Kicks - Home</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-SMRY6RJS9Q"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-SMRY6RJS9Q');
-</script>
 <body>
   <header class="navbar">
-        <div class="logo">
-          <img src="Urban_Emblem_Logo_for_Sneaker_Website-removebg-preview.png" alt="Sneak Kicks Logo" class="logo-icon" />
-          <span class="brand-name">SneakKicks</span>
+    <div class="logo">
+      <img src="Urban_Emblem_Logo_for_Sneaker_Website-removebg-preview.png" alt="Sneak Kicks Logo" class="logo-icon" />
+      <span class="brand-name">SneakKicks</span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="index.html#products">Shop</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="index.html#about">About Us</a>
+      <a href="cart.html" class="cart-link">
+        <img src="./icons8-cart-50.png" alt="Cart" class="cart-icon" />
+        <span class="cart-count" id="cart-count">0</span>
+      </a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1>Welcome to SneakKicks</h1>
+          <p>Your ultimate destination for stylish and comfortable sneakers.</p>
+          <button>Shop Now</button>
         </div>
-        <nav class="nav-links">
-          <a href="index.html">Home</a>
-          <a href="index.html#products">Shop</a>
-          <a href="contact.html">Contact Us</a>
-          <a href="index.html#about">About Us</a>
-          <a href="cart.html" class="cart-link">
-            <img src="./icons8-cart-50.png" alt="Cart" class="cart-icon" />
-            <span class="cart-count" id="cart-count">0</span>
-          </a>
-        </nav>
-      </header>
-     
-      <!-- HERO SECTION -->
-      <main>
-        <section class="hero">
-          <div class="hero-content">
-            <div class="hero-text">
-              <h1>Welcome to SneakKicks</h1>
-              <p>Your ultimate destination for stylish and comfortable sneakers.</p>
-              <button>Shop Now</button>
-            </div>
-            <div class="hero-image">
-              <img src="https://images.pexels.com/photos/7856965/pexels-photo-7856965.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt="Sneaker" />
-            </div>
-          </div>
-        </section>
-      </main>
+        <div class="hero-image">
+          <img src="https://images.pexels.com/photos/7856965/pexels-photo-7856965.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt="Sneaker" />
+        </div>
+      </div>
+    </section>
+  </main>
      
 
   <section id="about" class="container">
@@ -170,3 +159,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
