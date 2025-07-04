@@ -1,145 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WSZ2ZKQH');</script>
+   <!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sneak Kicks - Home</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SMRY6RJS9Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'G-SMRY6RJS9Q');
+</script>
 <body>
+  <!-- Google Tag Manager (noscript) -->
+   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WSZ2ZKQH"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
     <header class="navbar">
         <div class="logo">
-          <img src="https://placehold.co/40x40/e2e8f0/64748b?text=SK" alt="SneakKicks Logo" class="h-10 w-10 rounded-full">
-          SneakKicks
+          <img src="Urban_Emblem_Logo_for_Sneaker_Website-removebg-preview.png" alt="Sneak Kicks Logo" class="logo-icon" />
+          <span class="brand-name">SneakKicks</span>
         </div>
-        <nav>
-          <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="cart.html">Cart <span id="cart-count">0</span></a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#products">Shop</a>
+          <a href="contact.html">Contact Us</a>
+          <a href="index.html#about">About Us</a>
+          <a href="cart.html" class="cart-link">
+            <img src="./icons8-cart-50.png" alt="Cart" class="cart-icon" />
+            <span class="cart-count" id="cart-count">0</span>
+          </a>
         </nav>
-    </header>
+      </header>
+     
+      <!-- HERO SECTION -->
+      <main>
+        <section class="hero">
+          <div class="hero-content">
+            <div class="hero-text">
+              <h1>Welcome to SneakKicks</h1>
+              <p>Your ultimate destination for stylish and comfortable sneakers.</p>
+              <button>Shop Now</button>
+            </div>
+            <div class="hero-image">
+              <img src="https://images.pexels.com/photos/7856965/pexels-photo-7856965.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt="Sneaker" />
+            </div>
+          </div>
+        </section>
+      </main>
+     
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-text">
-        <h1>Step Up Your Style</h1>
-        <p>Discover the latest and greatest in sneaker fashion. From classic kicks to limited editions, we've got your feet covered.</p>
-        <button class="shop-now-btn add-to-cart" data-name="Limited Edition Sneaker" data-price="120.00">Shop Now</button>
+  <section id="about" class="container">
+    <h2>About Sneak Kicks</h2>
+    <p>At Sneak Kicks, we're more than just a sneaker store — we're a culture, a community, and a movement.
+        Founded with passion for style and performance, Sneak Kicks brings together the freshest designs, exclusive drops, and everyday classics under one roof. Whether you're a dedicated sneakerhead, a fitness enthusiast, or someone who simply values comfort and confidence in every step — we’ve got a pair for you.
+        We partner with top brands and up-and-coming designers .</p>
+    <p>Driven by a love for sneakers and a respect for those who wear them, we believe in making fashion accessible, bold, and expressive.
+        Step into the future of footwear.
+        Join the Sneak Kicks family — where style meets sole.</p>
+  </section>
+
+  <section id="promo-video" class="container">
+    <h2>Why to Choose Sneak Kicks?</h2>
+    <video controls poster="https://via.placeholder.com/640x360?text=Sneak+Kicks+Promo" preload="metadata">
+      <source src="./20250609_0518_SneakKicks_ Perfect Pair Showcase_simple_compose_01jx9hzk4wej083yca4m042abe.mp4" type="video/webm" />
+      Your browser does not support the video tag.
+    </video>
+  </section>
+
+  <section id="products" class="container">
+    <h2>Our Products</h2>
+    <div class="product-list">
+      <div class="product-card">
+        <img src="AIR+FORCE+1+'07+LV8+1.avif" alt="Sneaker"/>
+        <h3>Air Force</h3>
+        <p class="price">₹7,999</p>
+        <button class="add-to-cart" data-name="Air Force" data-price="7999">Add to Cart</button>
       </div>
-      <div class="hero-image">
-        <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Sneaker+Hero" alt="Hero Sneaker" class="rounded-lg shadow-lg">
+      <div class="product-card">
+        <img src="WMNS+AIR+JORDAN+1+RETRO+HI+OG.avif" alt="Sneaker"/>
+        <h3>JORDAN Mid</h3>
+        <p class="price">₹10,999</p>
+        <button class="add-to-cart" data-name="JORDAN Mid" data-price="10999">Add to Cart</button>
+      </div>
+      <div class="product-card">
+        <img src="AIR+JORDAN+1+LOW+SE.avif" alt="Sneaker"/>
+        <h3>JORDAN 1 Low</h3>
+        <p class="price">₹9,999</p>
+        <button class="add-to-cart" data-name="JORDAN 1 Low" data-price="9999">Add to Cart</button>
+      </div>
+      <div class="product-card">
+        <img src="W+NIKE+VOMERO+18+SE.avif" alt="Sneaker"/>
+        <h3>VOMERO 18 SE</h3>
+        <p class="price">₹12,999</p>
+        <button class="add-to-cart" data-name="VOMERO 18 SE" data-price="12999">Add to Cart</button>
+      </div>
+      <div class="product-card">
+        <img src="Samba_OG_Shoes_White_B75806_01_00_standard.avif" alt="Sneaker"/>
+        <h3>Samba OG </h3>
+        <p class="price">₹10,000</p>
+        <button class="add-to-cart" data-name="Samba OG" data-price="10000">Add to Cart</button>
+      </div>
+      <div class="product-card">
+        <img src="Ultraboost_5_Shoes_Black_JH9634_01_standard.avif" alt="Sneaker"/>
+        <h3>ULTRABOOST 1.0 </h3>
+        <p class="price">₹15,000</p>
+        <button class="add-to-cart" data-name="ULTRABOOST 1.0" data-price="15000">Add to Cart</button>
       </div>
     </div>
   </section>
 
-  <!-- Product Listing Section -->
-  <section class="products">
-    <h2>Our Top Picks</h2>
-    <div class="product-grid">
-      <!-- Product 1 -->
-      <div class="product-card">
-        <img src="https://placehold.co/300x200/e2e8f0/64748b?text=Sneaker+1" alt="Sneaker 1" class="product-image">
-        <h3 class="product-name">Urban Glide</h3>
-        <p class="product-price">$99.99</p>
-        <button class="add-to-cart" data-name="Urban Glide" data-price="99.99">Add to Cart</button>
-      </div>
-      <!-- Product 2 -->
-      <div class="product-card">
-        <img src="https://placehold.co/300x200/e2e8f0/64748b?text=Sneaker+2" alt="Sneaker 2" class="product-image">
-        <h3 class="product-name">Street Stride</h3>
-        <p class="product-price">$110.50</p>
-        <button class="add-to-cart" data-name="Street Stride" data-price="110.50">Add to Cart</button>
-      </div>
-      <!-- Product 3 -->
-      <div class="product-card">
-        <img src="https://placehold.co/300x200/e2e8f0/64748b?text=Sneaker+3" alt="Sneaker 3" class="product-image">
-        <h3 class="product-name">Cloud Walkers</h3>
-        <p class="product-price">$135.00</p>
-        <button class="add-to-cart" data-name="Cloud Walkers" data-price="135.00">Add to Cart</button>
-      </div>
-      <!-- Product 4 -->
-      <div class="product-card">
-        <img src="https://placehold.co/300x200/e2e8f0/64748b?text=Sneaker+4" alt="Sneaker 4" class="product-image">
-        <h3 class="product-name">Retro Runners</h3>
-        <p class="product-price">$85.75</p>
-        <button class="add-to-cart" data-name="Retro Runners" data-price="85.75">Add to Cart</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Call to Action Section -->
-  <section class="cta">
-    <div class="cta-content">
-      <h2>Don't Miss Out!</h2>
-      <p>Sign up for our newsletter to get exclusive deals and be the first to know about new arrivals.</p>
-      <form class="newsletter-form">
-        <input type="email" placeholder="Enter your email" required class="newsletter-input">
-        <button type="submit" class="newsletter-btn">Subscribe</button>
-      </form>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-col">
-        <h4>SneakKicks</h4>
-        <p>Your ultimate destination for the latest and greatest sneakers.</p>
-        <div class="social-links">
-          <a href="#"><img src="https://placehold.co/24x24/e2e8f0/64748b?text=IG" alt="Instagram"></a>
-          <a href="#"><img src="https://placehold.co/24x24/e2e8f0/64748b?text=FB" alt="Facebook"></a>
-          <a href="#"><img src="https://placehold.co/24x24/e2e8f0/64748b?text=TW" alt="Twitter"></a>
-          <a href="#"><img src="https://placehold.co/24x24/e2e8f0/64748b?text=YT" alt="YouTube"></a>
+  <footer>
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-col">
+          <h3>SneakKicks</h3>
+          <p>Your one-stop shop for stylish sneakers built for comfort and performance.</p>
+          <div class="social-icons">
+            <a href="#"><img src="instagram-svgrepo-com.svg" alt="Instagram"></a>
+            <a href="#"><img src="facebook-176-svgrepo-com.svg" alt="Facebook"></a>
+            <a href="#"><img src="twitter-154-svgrepo-com.svg" alt="Twitter"></a>
+            <a href="#"><img src="youtube-svgrepo-com.svg" alt="YouTube"></a>
+          </div>
+        </div>
+     
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#">Shop</a></li>
+            <li><a href="#">New Arrivals</a></li>
+            <li><a href="#">Best Sellers</a></li>
+          </ul>
+        </div>
+     
+        <div class="footer-col">
+          <h4>Customer Care</h4>
+          <ul>
+            <li><a href="contact.html" id="footer-contact-link"
+              onclick="window.dataLayer.push({
+                  'event': 'footer_link_click',
+                  'link_category': 'Customer Care',
+                  'link_text': 'Contact Us',
+                  'link_url': this.href,
+                  'link_id': this.id
+              });">Contact Us</a></li>
+            <li><a href="#">Return Policy</a></li>
+            <li><a href="#">Terms & Conditions</a></li>
+            <li><a href="#">FAQs</a></li>
+          </ul>
+        </div>
+     
+        <div class="footer-col">
+          <h4>Contact Info</h4>
+          <ul>
+            <li><strong>📍</strong> 123 Shoe Lane, Footwear City, FC 12345</li>
+            <li><strong>📞</strong> +1 (234) 567-890</li>
+            <li><strong>📧</strong> support@SneakKicks.com</li>
+          </ul>
         </div>
       </div>
-
-      <div class="footer-col">
-        <h4>Quick Links</h4>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="#">Shop</a></li>
-          <li><a href="#">New Arrivals</a></li>
-          <li><a href="#">Best Sellers</a></li>
-        </ul>
+     
+      <div class="footer-bottom">
+        <p>&copy; 2025 Sneak Kicks. All rights reserved.</p>
       </div>
-
-      <div class="footer-col">
-        <h4>Customer Care</h4>
-        <ul>
-          <li><a href="contact.html" id="footer-contact-link"
-             onclick="window.dataLayer.push({
-                 'event': 'footer_link_click',
-                 'link_category': 'Customer Care',
-                 'link_text': 'Contact Us',
-                 'link_url': this.href,
-                 'link_id': this.id
-             });">Contact Us</a></li>
-          <li><a href="#">Return Policy</a></li>
-          <li><a href="#">Terms & Conditions</a></li>
-          <li><a href="#">FAQs</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h4>Contact Info</h4>
-        <ul>
-          <li><strong>📍</strong> 123 Shoe Lane, Footwear City, FC 12345</li>
-          <li><strong>📞</strong> +1 (234) 567-890</li>
-          <li><strong>📧</strong> support@SneakKicks.com</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <p>&copy; 2025 SneakKicks. All rights reserved.</p>
-    </div>
   </footer>
 
-  <div id="custom-message-box"></div>
   <script src="script.js"></script>
 </body>
 </html>
