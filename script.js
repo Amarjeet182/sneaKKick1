@@ -25,18 +25,22 @@ function initIndex() {
       saveCart();
 
       alert(`${name} added to cart!`);
-      updateCartCount(); // Optional: live count on navbar
+      updateCartCount();
 
       // --- Adobe Analytics: Send Add to Cart event ---
-      // Check if the 's' object (from Adobe Tags) is available
-      if (typeof s !== "undefined") {
-        s.products = "%;" + name + ";1;" + price; // Format: Category;Product;Quantity;Price
-        s.events = "event2,event6=" + price + ",event8=1"; // scAdd, cartAddValue, itemsAdded
-        s.eVar2 = name; // Product Name (Last Added)
-        s.eVar3 = price; // Product Price (Last Added)
-        s.tl(true, 'o', 'Add to Cart - ' + name); // Link tracking call
+      if (typeof s !== "undefined" && typeof digitalData !== "undefined") {
+        // Populate Data Layer
+        digitalData.product = [{
+            productInfo: { productName: name, price: price },
+            category: { primaryCategory: 'Footwear' }
+        }];
+
+        s.products = "%;" + name + ";1;" + price;
+        s.events = "event2,event6=" + price + ",event8=1";
+        s.eVar2 = name;
+        s.eVar3 = price;
+        s.tl(true, 'o', 'Add to Cart - ' + name);
       }
-      // Removed gtag('event', 'add_to_cart', ...)
     });
   });
 
@@ -68,44 +72,55 @@ function initCart() {
       });
     }
 
-    totalSpan.textContent = `₹${sum.toFixed(2)}`; // Update display total
-    // Removed gtag('event', 'cart_view_update', ...)
+    totalSpan.textContent = `₹${sum.toFixed(2)}`;
   }
 
   // Initial display and Adobe Analytics event on cart page load
   updateCartDisplay();
 
   // --- Adobe Analytics: Send Page View event for Cart Page ---
-  if (typeof s !== "undefined") {
+  if (typeof s !== "undefined" && typeof digitalData !== "undefined") {
     const initialCartTotal = cart.reduce((acc, item) => acc + item.price, 0);
-    s.pageName = document.title; // Set page name
-    s.prop3 = cart.length; // Cart Item Count on page load
-    s.prop4 = initialCartTotal; // Cart Value on page load
-    s.events = "event5"; // Cart Page Viewed
-    s.t(); // Page view tracking call
+    
+    // Populate Data Layer
+    digitalData.cart.price = { basePrice: initialCartTotal, currency: 'INR' };
+    digitalData.cart.item = cart.map(item => ({
+        productInfo: { productName: item.name, price: item.price },
+        quantity: 1
+    }));
+
+    s.pageName = document.title;
+    s.prop3 = cart.length;
+    s.prop4 = initialCartTotal;
+    s.events = "event5";
+    s.t();
   }
-  // Removed gtag('event', 'page_view', ...)
 
 
   // Event listener for remove buttons
   cartList.addEventListener("click", (e) => {
     if (e.target.classList.contains("remove-btn")) {
       const index = parseInt(e.target.getAttribute("data-index"));
-      const removedItem = cart[index]; // Get the item being removed
+      const removedItem = cart[index];
 
       cart.splice(index, 1);
       saveCart();
       updateCartDisplay();
 
       // --- Adobe Analytics: Send Remove from Cart event ---
-      if (typeof s !== "undefined") {
-        s.products = "%;" + removedItem.name + ";-1;" + removedItem.price; // Quantity -1 for removal
-        s.events = "event3,event7=" + removedItem.price + ",event9=1"; // scRemove, cartRemoveValue, itemsRemoved
-        s.eVar2 = removedItem.name; // Product Name (Last Removed)
-        s.eVar3 = removedItem.price; // Product Price (Last Removed)
-        s.tl(true, 'o', 'Remove from Cart - ' + removedItem.name); // Link tracking call
+      if (typeof s !== "undefined" && typeof digitalData !== "undefined") {
+        // Populate Data Layer
+        digitalData.product = [{
+            productInfo: { productName: removedItem.name, price: removedItem.price },
+            category: { primaryCategory: 'Footwear' }
+        }];
+
+        s.products = "%;" + removedItem.name + ";-1;" + removedItem.price;
+        s.events = "event3,event7=" + removedItem.price + ",event9=1";
+        s.eVar2 = removedItem.name;
+        s.eVar3 = removedItem.price;
+        s.tl(true, 'o', 'Remove from Cart - ' + removedItem.name);
       }
-      // Removed gtag('event', 'remove_from_cart', ...)
     }
   });
 
@@ -114,22 +129,28 @@ function initCart() {
     checkoutBtn.addEventListener("click", () => {
       if (cart.length > 0) {
         // --- Adobe Analytics: Send Begin Checkout event ---
-        if (typeof s !== "undefined") {
+        if (typeof s !== "undefined" && typeof digitalData !== "undefined") {
           const finalCartTotal = cart.reduce((acc, item) => acc + item.price, 0);
-          // Build products string for all items in cart
           const productListString = cart.map(item => `%;${item.name};1;${item.price}`).join('');
-          s.products = productListString.substring(1); // Remove leading semicolon
-          s.total = finalCartTotal; // Total value of the cart
-          s.currencyCode = "INR"; // Set currency code as per your GA4 config
-          s.events = "event4"; // scCheckout
-          s.tl(true, 'o', 'Begin Checkout'); // Link tracking call
+
+          // Populate Data Layer
+          digitalData.cart.price = { basePrice: finalCartTotal, currency: 'INR' };
+          digitalData.cart.item = cart.map(item => ({
+              productInfo: { productName: item.name, price: item.price },
+              quantity: 1
+          }));
+
+          s.products = productListString.substring(1);
+          s.total = finalCartTotal;
+          s.currencyCode = "INR";
+          s.events = "event4";
+          s.tl(true, 'o', 'Begin Checkout');
         }
-        // Removed gtag('event', 'begin_checkout', ...)
 
         alert("Proceeding to checkout!");
-        cart = []; // Clear cart after checkout
+        cart = [];
         saveCart();
-        updateCartDisplay(); // Update display to show empty cart
+        updateCartDisplay();
       } else {
         alert("Your cart is empty. Please add items before checking out.");
       }
@@ -143,7 +164,7 @@ function initContactForm() {
 
   if (contactForm) {
     contactForm.addEventListener("submit", function (e) {
-      e.preventDefault(); // Prevent the default form submission
+      e.preventDefault();
 
       // Get form data
       const name = document.getElementById("name").value;
@@ -154,20 +175,28 @@ function initContactForm() {
       const rating = document.getElementById("rating").value;
 
       // --- Adobe Analytics: Send Form Submit event ---
-      if (typeof s !== "undefined") {
-        s.prop5 = "Contact Us Form"; // Form Name
-        s.eVar5 = inquiryCategory; // Inquiry Category
-        s.eVar6 = parseFloat(rating); // Form Submission Rating
-        s.eVar7 = name; // User Name Submitted
-        s.eVar8 = email; // User Email Submitted
-        s.eVar9 = message.length; // Message Length
-        s.events = "event10"; // formSubmit
-        s.tl(true, 'o', 'Contact Form Submitted - ' + inquiryCategory); // Link tracking call
-      }
-      // Removed gtag("event", "form_submit", ...)
-      // Removed else block for gtag not defined as we are using Adobe now.
+      if (typeof s !== "undefined" && typeof digitalData !== "undefined") {
+        // Populate Data Layer
+        digitalData.form = {
+            formInfo: { formName: 'Contact Us', formSubmit: true },
+            attributes: { inquiryCategory: inquiryCategory, messageLength: message.length }
+        };
+        digitalData.user = {
+            userInfo: {
+                profile: { age: age, rating: rating }
+            }
+        };
 
-      // Provide user feedback and reset the form
+        s.prop5 = "Contact Us Form";
+        s.eVar5 = inquiryCategory;
+        s.eVar6 = parseFloat(rating);
+        s.eVar7 = name;
+        s.eVar8 = email;
+        s.eVar9 = message.length;
+        s.events = "event10";
+        s.tl(true, 'o', 'Contact Form Submitted - ' + inquiryCategory);
+      }
+
       alert("Thank you for your message! We will get back to you soon.");
       contactForm.reset();
     });
@@ -183,5 +212,5 @@ window.onload = () => {
   } else if (document.getElementById("contactForm")) {
     initContactForm();
   }
-  updateCartCount(); // Update cart count on all pages if applicable
+  updateCartCount();
 };
