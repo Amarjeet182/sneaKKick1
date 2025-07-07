@@ -5,6 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SneakKicks - Cart</title>
   <link rel="stylesheet" href="style.css" />
+  <script>digitalData = {
+  page: {
+    pageInfo: {
+      pageName: "sneaKKick:home", // e.g., sneaKKick:product:jordan-mid
+      siteSection: "home", // e.g., "products", "category", "checkout"
+      server: "amarjeet182.github.io"
+    },
+    category: {
+      primaryCategory: "sneakers", // e.g., "running", "lifestyle"
+      subCategory1: "", // e.g., "jordan", "ultraboost"
+    },
+    attributes: {
+      country: "IN", // Based on user's location (India)
+      pageType: "content" // e.g., "pdp", "plp", "homepage", "cart"
+    }
+  },
+  product: [{ // This array would be populated on product detail, cart, or purchase pages
+    productInfo: {
+      sku: "SKU12345",
+      productName: "JORDAN Mid",
+      price: "150.00", // Sale price
+      onSale: true,
+      stockStatus: "in stock"
+    },
+    category: {
+      primaryCategory: "sneakers",
+      subCategory1: "jordan"
+    }
+  }],
+  user: {
+    profile: {
+      loginStatus: "logged out", // or "logged in"
+      customerID: "" // Populate after login
+    }
+  },
+  cart: {
+    cartID: "CID5678",
+    itemCount: 0,
+    cartTotal: "0.00"
+  },
+  event: [] // This array is used to push event information
+};
+  </script>
   <script src="https://assets.adobedtm.com/236ca7d75265/d8dfe6c2cd3f/launch-2c0ed2ffb1d1-development.min.js" async></script>
 </head>
 
